@@ -1,0 +1,59 @@
+﻿@model CategoryViewModel
+
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Web.Common
+
+@using Microsoft.AspNetCore.Routing
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Save Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model.Categories)
+        {
+            <tr>
+                <td scope="row">@item.CategoryId</td>
+                <td>@item.Detail</td>
+                <td>@item.Description</td>
+                <td>@(item.SaveDate!=null?Convert.ToDateTime(item.SaveDate).ToString("yyyy-MM-dd HH:mm:ss"):"-")</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="label label-inline label-light-success font-weight-bold">Aktif</span>
+                    }
+                    else
+                    {
+                        <span class="label label-inline label-light-danger font-weight-bold">Pasif</span>
+                    }
+
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item update" name="@item.CategoryId">Update</button>
+                            <button class="dropdown-item changeStatus" name="@item.CategoryId">Change Status</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+        }
+
+    </tbody>
+</table>
+
+@Html.PagedListPager(Model.Categories, page => Url.Action("Categories", "Category", new RouteValueDictionary {
+    { "Page", page },
+}), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "POST", UpdateTargetId = "data" }))
